@@ -17,7 +17,7 @@ namespace ExampleServiceNov2018.Api.Controllers
         }
 
         [HttpPost("NameTodoList")]
-        public async Task<CommandResult> NameTodoItem(Cmd<NameTodoList> cmd) => await _mediator.Send(cmd);
+        public async Task<CommandResult> NameTodoItem([FromBody]Cmd<NameTodoList> cmd) => await _mediator.Send(cmd);
         
         [HttpPost("AddTodoItem")]
         public async Task<CommandResult> AddTodoItem(Cmd<AddTodoItem> cmd) => await _mediator.Send(cmd);

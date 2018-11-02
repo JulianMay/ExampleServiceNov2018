@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ExampleServiceNov2018.Application;
+using ExampleServiceNov2018.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,7 +15,8 @@ namespace ExampleServiceNov2018.Api
 {
     public class Startup
     {
-        private const string _connectionString = "Server=localhosts\\sqlexpress;Database=ExampleServiceNov2018;";
+        private const string _connectionString = 
+            "Server=.\\sqlexpress; Database=ExampleServiceNov2018; Trusted_Connection=True;";
         
         private static MsSqlStreamStoreSettings _msSqlStreamStoreSettings 
             = new MsSqlStreamStoreSettings(_connectionString);
@@ -25,7 +27,9 @@ namespace ExampleServiceNov2018.Api
         {
             services.AddMvc();
             //Register infrastructure
-            services.AddScoped<IStreamStore>((x)=>new MsSqlStreamStore(_msSqlStreamStoreSettings));
+            SetupStreamStore(services);
+            services.AddScoped<ITodoLists, TodoListRepository>();;
+            services.AddScoped<TodoCommandHandler>();
             //Register mediator
             services.AddMediatR();
             services.AddMediatR(typeof(ApplicationDummyClass).Assembly);
@@ -40,6 +44,16 @@ namespace ExampleServiceNov2018.Api
             }
 
             app.UseMvc();
+        }
+
+        private void SetupStreamStore(IServiceCollection services)
+        {
+            var streamStore = new MsSqlStreamStore(_msSqlStreamStoreSettings);
+            services.AddSingleton<IStreamStore>((x)=>streamStore);
+            var schema = streamStore.CheckSchema().GetAwaiter().GetResult();
+            if (!schema.IsMatch())
+                streamStore.CreateSchema();
+
         }
     }
 }

@@ -6,6 +6,9 @@ using static ExampleServiceNov2018.Domain.TodoList;
 
 namespace ExampleServiceNov2018.Application
 {
+    /// <summary>
+    /// Unwraps routing-commandse
+    /// </summary>
     public class TodoCommandHandler : 
         IRequestHandler<Cmd<NameTodoList>,CommandResult>,
         IRequestHandler<Cmd<AddTodoItem>,CommandResult>,

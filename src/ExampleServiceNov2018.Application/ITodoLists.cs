@@ -6,6 +6,6 @@ namespace ExampleServiceNov2018.Application
     public interface ITodoLists
     {
         Task<TodoListState> Load(string aggregateId);
-        Task<int> Save(TodoListState state);
+        Task<int> Save(TodoListState aggregate);
     }
 }

@@ -11,7 +11,8 @@ namespace ExampleServiceNov2018.Domain
     {
         public readonly string Id;
         public readonly int LoadedRevision;
-        public List<object> UncommittedEvents = new List<object>();
+        private readonly List<object> _uncomittedEvents = new List<object>();
+        public IReadOnlyCollection<object> UncommittedEvents => _uncomittedEvents; 
 
 
         protected AggregateState(string id, int loadedRevision)
@@ -23,7 +24,7 @@ namespace ExampleServiceNov2018.Domain
         public void Emit(object @event)
         {
             Apply(@event);
-            UncommittedEvents.Add(@event);
+            _uncomittedEvents.Add(@event);
         }
         
         public abstract void Apply(object @event);

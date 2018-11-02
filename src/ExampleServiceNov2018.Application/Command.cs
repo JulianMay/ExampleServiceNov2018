@@ -1,4 +1,5 @@
 ﻿using System;
+using ExampleServiceNov2018.Domain.Commands;
 using MediatR;
 
 namespace ExampleServiceNov2018.Application
@@ -14,6 +15,16 @@ namespace ExampleServiceNov2018.Application
         public Cmd(T command)
         {
             Command = command ?? throw new ArgumentNullException(nameof(command));
+        }
+
+        /// <summary>
+        /// Because constructors can't infer generic type of argument...
+        /// </summary>
+        /// <param name="cmd"></param>
+        /// <returns></returns>
+        public static Cmd<T> Envelope(T cmd)
+        {
+            return new Cmd<T>(cmd);
         }
     }
 }

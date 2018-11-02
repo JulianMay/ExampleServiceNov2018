@@ -5,4 +5,7 @@
   <ItemGroup>
     <PackageReference Include="SqlStreamStore.MsSql" Version="1.1.3" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ExampleServiceNov2018.Application\ExampleServiceNov2018.Application.csproj" />
+  </ItemGroup>
 </Project>

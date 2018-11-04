@@ -15,9 +15,9 @@ namespace ExampleServiceNov2018.ReadService
         private readonly IStreamStore _streamStore;
         private SqlProjectionSubscription[] _subscriptions;
 
-        public TodoReadServiceHost(string sqlConnectionString, IStreamStore streamStore)
+        public TodoReadServiceHost(ReadConnection sqlConnection, IStreamStore streamStore)
         {
-            _sqlConnectionString = sqlConnectionString;
+            _sqlConnectionString = sqlConnection.SqlConnectionString;
             _streamStore = streamStore;
         }
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using ExampleServiceNov2018.Domain.Events;
 
-namespace ExampleServiceNov2018.Domain
+namespace ExampleServiceNov2018.Domain.TodoList
 {
     public class TodoItem : ValueObject<TodoItem>
     {

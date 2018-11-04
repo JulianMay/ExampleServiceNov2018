@@ -2,7 +2,7 @@
 using ExampleServiceNov2018.Domain.Commands;
 using ExampleServiceNov2018.Domain.Events;
 
-namespace ExampleServiceNov2018.Domain
+namespace ExampleServiceNov2018.Domain.TodoList
 {
     /// <summary>
     /// This is invariant-checking, notice state is method-injected (as can dependencies)

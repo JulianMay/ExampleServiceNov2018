@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using ExampleServiceNov2018.Domain.TodoList;
 
 namespace ExampleServiceNov2018.Infrastructure
 {

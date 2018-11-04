@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using MediatR;
 using ExampleServiceNov2018.Domain.Commands;
-using static ExampleServiceNov2018.Domain.TodoList;
+using static ExampleServiceNov2018.Domain.TodoList.TodoList;
 
 namespace ExampleServiceNov2018.Application
 {

@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
+using ExampleServiceNov2018.ReadService;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using ExampleServiceNov2018.Application.Queries;
 
 namespace ExampleServiceNov2018.Api.Controllers
 {
@@ -16,10 +16,10 @@ namespace ExampleServiceNov2018.Api.Controllers
         }
         
         [HttpGet("All")]
-        public async Task<TodoLists> GetAll() => await _mediator.Send(new ListAllItems());
+        public async Task<TodoListCollectionDTO> GetAll() => await _mediator.Send(new ListAllItems());
         
         [HttpGet("ById/{aggregateId}")]
-        public async Task<TodoLists.List> GetByIId([FromRoute]string aggregateId) 
-            => await _mediator.Send(new GetTodoItemById{AggregateId = aggregateId});
+        public async Task<TodoListDTO> GetByIId([FromRoute]string aggregateId) 
+            => await _mediator.Send(new GetTodoListById{AggregateId = aggregateId});
     }
 }

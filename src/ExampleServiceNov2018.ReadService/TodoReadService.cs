@@ -1,23 +1,26 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Dapper;
-using ExampleServiceNov2018.Application.Queries;
+using MediatR;
 
 namespace ExampleServiceNov2018.ReadService
 {
-    public class TodoListReadService : ITodoListReadService
+    public class TodoReadService : 
+        IRequestHandler<ListAllItems, TodoListCollectionDTO>,
+        IRequestHandler<GetTodoListById, TodoListDTO>
     {
         private readonly string _sqlConnectionstring;
 
-        public TodoListReadService(string sqlConnectionstring)
+        public TodoReadService(ReadConnection sqlConnection)
         {
-            _sqlConnectionstring = sqlConnectionstring;
+            _sqlConnectionstring = sqlConnection.SqlConnectionString;
         }
 
-        public Application.Queries.TodoLists ListAll()
+        public TodoListCollectionDTO ListAll()
         {
             using (var db = new SqlConnection(_sqlConnectionstring))
             {
@@ -31,7 +34,7 @@ namespace ExampleServiceNov2018.ReadService
             }
         }
         
-        public Application.Queries.TodoLists.List GetByAggregateId(string aggregateId)
+        public TodoListDTO GetByAggregateId(string aggregateId)
         {
             using (var db = new SqlConnection(_sqlConnectionstring))
             {
@@ -61,22 +64,23 @@ namespace ExampleServiceNov2018.ReadService
                 Name = name;
             }
         }
-        private Application.Queries.TodoLists MapAllLists(IEnumerable<ListData> listsInfo, IEnumerable<dynamic> itemInfo)
+        
+        private TodoListCollectionDTO MapAllLists(IEnumerable<ListData> listsInfo, IEnumerable<dynamic> itemInfo)
         {
             var itemsByAggregate = itemInfo.ToLookup(i => ((string)i.AggregateId).Trim());
             var lists = listsInfo.Select(l=>MapTodoList(l, (aggId) => itemsByAggregate[aggId])).ToArray();
             
-            return new Application.Queries.TodoLists
+            return new TodoListCollectionDTO
             {
                 Collection = lists
             };
         }
         
-        Application.Queries.TodoLists.List MapTodoList(ListData listData, Func<string,IEnumerable<dynamic>> itemsResolver)
+        TodoListDTO MapTodoList(ListData listData, Func<string,IEnumerable<dynamic>> itemsResolver)
         {
             var aggId = listData.AggregateId;
             var items = itemsResolver(aggId);
-            return new Application.Queries.TodoLists.List
+            return new TodoListDTO
             {
                 AggregateId = aggId.Trim(),
                 Name = listData.Name,
@@ -84,18 +88,21 @@ namespace ExampleServiceNov2018.ReadService
             };
         }
 
-        private Application.Queries.TodoLists.Item MapItem(dynamic itemData)
+        private TodoItemDTO MapItem(dynamic itemData)
         {
-            return new Application.Queries.TodoLists.Item
+            return new TodoItemDTO
             {
                 Text = itemData.Text,
                 Checked = itemData.Checked
             };
         }
 
-        
-        
-        
+
+        public Task<TodoListCollectionDTO> Handle(ListAllItems request, CancellationToken cancellationToken)
+            => Task.FromResult(ListAll());
+
+        public Task<TodoListDTO> Handle(GetTodoListById request, CancellationToken cancellationToken)
+            => Task.FromResult(GetByAggregateId(request.AggregateId));
     }
     
     

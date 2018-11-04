@@ -6,12 +6,12 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="MediatR" Version="5.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="SqlStreamStore.MsSql" Version="1.1.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ExampleServiceNov2018.Application\ExampleServiceNov2018.Application.csproj" />
     <ProjectReference Include="..\ExampleServiceNov2018.Domain\ExampleServiceNov2018.Domain.csproj" />
   </ItemGroup>
 

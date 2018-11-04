@@ -20,12 +20,12 @@ namespace ExampleServiceNov2018.Api.Controllers
         public async Task<CommandResult> NameTodoItem([FromBody]Cmd<NameTodoList> cmd) => await _mediator.Send(cmd);
         
         [HttpPost("AddTodoItem")]
-        public async Task<CommandResult> AddTodoItem(Cmd<AddTodoItem> cmd) => await _mediator.Send(cmd);
+        public async Task<CommandResult> AddTodoItem([FromBody]Cmd<AddTodoItem> cmd) => await _mediator.Send(cmd);
         
         [HttpPost("CheckTodoItem")]
-        public async Task<CommandResult> NewTodoList(Cmd<CheckTodoItem> cmd) => await _mediator.Send(cmd);
+        public async Task<CommandResult> NewTodoList([FromBody]Cmd<CheckTodoItem> cmd) => await _mediator.Send(cmd);
         
         [HttpPost("UncheckTodoItem")]
-        public async Task<CommandResult> NewTodoList(Cmd<UncheckTodoItem> cmd) => await _mediator.Send(cmd);
+        public async Task<CommandResult> NewTodoList([FromBody]Cmd<UncheckTodoItem> cmd) => await _mediator.Send(cmd);
     }
 }

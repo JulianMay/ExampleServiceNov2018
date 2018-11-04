@@ -7,7 +7,7 @@ namespace ExampleServiceNov2018.Domain
     {
         public readonly string Text;
         public readonly bool Done;
-        public static readonly TodoItem New;
+        public static readonly TodoItem New = new TodoItem(String.Empty, false);
         
         internal TodoItem(string text, bool done)
         {

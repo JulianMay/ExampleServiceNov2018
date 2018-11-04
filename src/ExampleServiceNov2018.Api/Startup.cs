@@ -4,12 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using ExampleServiceNov2018.Application;
 using ExampleServiceNov2018.Infrastructure;
+using ExampleServiceNov2018.ReadService;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using SqlStreamStore;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace ExampleServiceNov2018.Api
 {
@@ -30,6 +33,11 @@ namespace ExampleServiceNov2018.Api
             SetupStreamStore(services);
             services.AddScoped<ITodoLists, TodoListRepository>();;
             services.AddScoped<TodoCommandHandler>();
+            
+            //Register projections
+            services.AddSingleton<IHostedService, TodoReadServiceHost>((c)=> //using the same sql db as write side (for now)
+                new TodoReadServiceHost(_connectionString, c.GetService<IStreamStore>()));
+            
             //Register mediator
             services.AddMediatR();
             services.AddMediatR(typeof(ApplicationDummyClass).Assembly);

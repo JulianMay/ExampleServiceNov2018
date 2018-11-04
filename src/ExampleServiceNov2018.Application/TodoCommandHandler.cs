@@ -15,9 +15,9 @@ namespace ExampleServiceNov2018.Application
         IRequestHandler<Cmd<CheckTodoItem>,CommandResult>,
         IRequestHandler<Cmd<UncheckTodoItem>,CommandResult>
     {
-        private readonly ITodoLists _lists;
+        private readonly ITodoListRepository _lists;
 
-        public TodoCommandHandler(ITodoLists lists)
+        public TodoCommandHandler(ITodoListRepository lists)
         {
             _lists = lists;
         }

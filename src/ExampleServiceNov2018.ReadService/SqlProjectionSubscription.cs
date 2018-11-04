@@ -13,7 +13,7 @@ namespace ExampleServiceNov2018.ReadService
     /// Wraps the subscription to the eventstreams, and handles commit-interval (rarely while catching-up, instantly on catched-up),
     /// as well as maintaining a read-position with the 
     /// </summary>
-    public class SqlProjectionSubscription
+    internal class SqlProjectionSubscription
     {
         private readonly IStreamStore _store;
         private readonly ISqlProjection _projection;

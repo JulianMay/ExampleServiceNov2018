@@ -1,0 +1,191 @@
+{
+	"info": {
+		"name": "TodoPOC ExampleServiceNov2018",
+		"_postman_id": "4033e066-824d-49e8-82ef-e1d86c9fa78b",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/Todo/read/all",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:5000/Todo/read/all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"Todo",
+						"read",
+						"all"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/Todo/read/byid/{aggregateId}",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:5000/Todo/read/byid/tl1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"Todo",
+						"read",
+						"byid",
+						"tl1"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/Todo/write/NameTodoList",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"Command\" : {\n\t\t\"AggregateId\" : \"tl3\",\n\t\t\"Name\" : \"Tom liste\"\n\t}\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/Todo/write/NameTodoList",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"Todo",
+						"write",
+						"NameTodoList"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/Todo/write/AddTodoItem",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"Command\" : {\n\t\t\"AggregateId\" : \"tl2\",\n\t\t\"ItemNumber\" : 100,\n\t\t\"ItemText\" : \"AFagegD  gde\"\n\t}\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/Todo/write/AddTodoItem",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"Todo",
+						"write",
+						"AddTodoItem"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/Todo/write/UncheckTodoItem",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"Command\" : {\n\t\t\"AggregateId\" : \"tl1\",\n\t\t\"ItemNumber\" : 1\n\t}\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/Todo/write/uncheckTodoItem",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"Todo",
+						"write",
+						"uncheckTodoItem"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/Todo/write/CheckTodoItem",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"Command\" : {\n\t\t\"AggregateId\" : \"tl1\",\n\t\t\"ItemNumber\" : 1\n\t}\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/Todo/write/checkTodoItem",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"Todo",
+						"write",
+						"checkTodoItem"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

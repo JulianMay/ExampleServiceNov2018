@@ -15,6 +15,9 @@
     "frameworks": {
       "netstandard2.0": {
         "projectReferences": {
+          "C:\\code\\ExampleServiceNov2018\\src\\ExampleServiceNov2018.Application\\ExampleServiceNov2018.Application.csproj": {
+            "projectPath": "C:\\code\\ExampleServiceNov2018\\src\\ExampleServiceNov2018.Application\\ExampleServiceNov2018.Application.csproj"
+          },
           "C:\\code\\ExampleServiceNov2018\\src\\ExampleServiceNov2018.Domain\\ExampleServiceNov2018.Domain.csproj": {
             "projectPath": "C:\\code\\ExampleServiceNov2018\\src\\ExampleServiceNov2018.Domain\\ExampleServiceNov2018.Domain.csproj"
           }

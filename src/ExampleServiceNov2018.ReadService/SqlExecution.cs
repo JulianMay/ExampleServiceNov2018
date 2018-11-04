@@ -2,7 +2,7 @@ using System.Data.SqlClient;
 
 namespace ExampleServiceNov2018.ReadService
 {
-    public class SqlExecution
+    internal class SqlExecution
     {
         public static void Run(string script, SqlConnection connection)
         {

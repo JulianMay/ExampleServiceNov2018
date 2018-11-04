@@ -12,7 +12,7 @@ namespace ExampleServiceNov2018.ReadService
     /// <summary>
     /// Responsible for checking SQL-schema's and composing subscription->projection
     /// </summary>
-    public class SqlProjectionFactory
+    internal class SqlProjectionFactory
     {
         private string _connectionString;
         private readonly IStreamStore _sqlStreamStore;
@@ -23,7 +23,7 @@ namespace ExampleServiceNov2018.ReadService
             _sqlStreamStore = sqlStreamStore;
         }
 
-        public IEnumerable<SqlProjectionSubscription> WakeReadProjections(ISqlProjection[] projections)
+        internal IEnumerable<SqlProjectionSubscription> WakeReadProjections(ISqlProjection[] projections)
         {
             // Subscriptions are scoped as: 1 instance per scema per database (connectionstring becomes the partition-key)
             using (var connection = SqlExecution.OpenWriteConnection(_connectionString))

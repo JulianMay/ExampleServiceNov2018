@@ -5,7 +5,7 @@ using SqlStreamStore.Streams;
 
 namespace ExampleServiceNov2018.ReadService
 {
-    public class Deserialization
+    internal class Deserialization
     {
         //DUPLICATION FROM TodoListRepository ( Infrastructure / ReadService could share dependency, but should they? )
         public static async Task<object> Deserialize(StreamMessage message)

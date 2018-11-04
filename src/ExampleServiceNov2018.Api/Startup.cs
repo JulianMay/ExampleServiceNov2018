@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ExampleServiceNov2018.Application;
+using ExampleServiceNov2018.Application.Queries;
 using ExampleServiceNov2018.Infrastructure;
 using ExampleServiceNov2018.ReadService;
 using MediatR;
@@ -31,16 +32,18 @@ namespace ExampleServiceNov2018.Api
             services.AddMvc();
             //Register infrastructure
             SetupStreamStore(services);
-            services.AddScoped<ITodoLists, TodoListRepository>();;
+            services.AddScoped<ITodoListRepository, TodoListRepositoryRepository>();;
             services.AddScoped<TodoCommandHandler>();
             
-            //Register projections
+            //Register projections and readservices
             services.AddSingleton<IHostedService, TodoReadServiceHost>((c)=> //using the same sql db as write side (for now)
                 new TodoReadServiceHost(_connectionString, c.GetService<IStreamStore>()));
+            services.AddScoped<ITodoListReadService>((c) => new TodoListReadService(_connectionString));
+            
             
             //Register mediator
             services.AddMediatR();
-            services.AddMediatR(typeof(ApplicationDummyClass).Assembly);
+            services.AddMediatR(typeof(ApplicationLayer).Assembly);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace ExampleServiceNov2018.ReadService
 {
-    public static class TodoReadSchema
+    internal static class TodoReadSchema
     {
         public static IEnumerable<string> SetupSchema = new[]{
 	//Todo: use different schema than 'dbo', rather than prepending 'R_' to tablenames...

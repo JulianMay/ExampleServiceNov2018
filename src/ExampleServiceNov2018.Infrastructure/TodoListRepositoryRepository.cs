@@ -11,11 +11,11 @@ using System.Collections.Generic;
 
 namespace ExampleServiceNov2018.Infrastructure
 {
-    public class TodoListRepository : ITodoLists
+    public class TodoListRepositoryRepository : ITodoListRepository
     {
         private readonly IStreamStore _store;
 
-        public TodoListRepository(IStreamStore store)
+        public TodoListRepositoryRepository(IStreamStore store)
         {
             _store = store;
         }

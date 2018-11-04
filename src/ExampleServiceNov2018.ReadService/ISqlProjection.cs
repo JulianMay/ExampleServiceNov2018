@@ -7,7 +7,7 @@ namespace ExampleServiceNov2018.ReadService
     /// The projection itself is responsible for generating the "ApplyScript", as well as provide Schema-management hooks
     /// that the projection-factory can use to validate/teardown/setup appropriate sql-schema
     /// </summary>
-    public interface ISqlProjection
+    internal interface ISqlProjection
     {
         /// <summary>
         /// Returns DML for the event

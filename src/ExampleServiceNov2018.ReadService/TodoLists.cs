@@ -3,7 +3,7 @@ using ExampleServiceNov2018.Domain.Events;
 
 namespace ExampleServiceNov2018.ReadService
 {
-    public class TodoLists : ISqlProjection
+    internal class TodoLists : ISqlProjection
     {
         //See TotoReadSchema.sql
         

@@ -16,6 +16,15 @@
           "lib/netstandard2.0/Dapper.dll": {}
         }
       },
+      "MediatR/5.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/MediatR.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/MediatR.dll": {}
+        }
+      },
       "Microsoft.CSharp/4.4.1": {
         "type": "package",
         "compile": {
@@ -402,6 +411,20 @@
           "ref/netstandard1.3/System.Threading.Tasks.dll": {}
         }
       },
+      "ExampleServiceNov2018.Application/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.0",
+        "dependencies": {
+          "ExampleServiceNov2018.Domain": "1.0.0",
+          "MediatR": "5.1.0"
+        },
+        "compile": {
+          "bin/placeholder/ExampleServiceNov2018.Application.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ExampleServiceNov2018.Application.dll": {}
+        }
+      },
       "ExampleServiceNov2018.Domain/1.0.0": {
         "type": "project",
         "framework": ".NETStandard,Version=v2.0",
@@ -428,6 +451,19 @@
         "lib/netstandard1.3/Dapper.xml",
         "lib/netstandard2.0/Dapper.dll",
         "lib/netstandard2.0/Dapper.xml"
+      ]
+    },
+    "MediatR/5.1.0": {
+      "sha512": "jeDegLfMe62NHC1oAz8FlWTQva4pOUAx/rk35TfpUUbr8MkqpJZYljh1ZrnKavhPPgUUHxUSay/6KEPYd4H57g==",
+      "type": "package",
+      "path": "mediatr/5.1.0",
+      "files": [
+        ".signature.p7s",
+        "lib/net45/MediatR.dll",
+        "lib/netstandard1.3/MediatR.dll",
+        "lib/netstandard2.0/MediatR.dll",
+        "mediatr.5.1.0.nupkg.sha512",
+        "mediatr.nuspec"
       ]
     },
     "Microsoft.CSharp/4.4.1": {
@@ -1958,6 +1994,11 @@
         "ref/xamarinwatchos10/_._"
       ]
     },
+    "ExampleServiceNov2018.Application/1.0.0": {
+      "type": "project",
+      "path": "../ExampleServiceNov2018.Application/ExampleServiceNov2018.Application.csproj",
+      "msbuildProject": "../ExampleServiceNov2018.Application/ExampleServiceNov2018.Application.csproj"
+    },
     "ExampleServiceNov2018.Domain/1.0.0": {
       "type": "project",
       "path": "../ExampleServiceNov2018.Domain/ExampleServiceNov2018.Domain.csproj",
@@ -1967,6 +2008,7 @@
   "projectFileDependencyGroups": {
     ".NETStandard,Version=v2.0": [
       "Dapper >= 1.50.5",
+      "ExampleServiceNov2018.Application >= 1.0.0",
       "ExampleServiceNov2018.Domain >= 1.0.0",
       "NETStandard.Library >= 2.0.3",
       "Newtonsoft.Json >= 11.0.2",
@@ -2003,6 +2045,9 @@
       "frameworks": {
         "netstandard2.0": {
           "projectReferences": {
+            "C:\\code\\ExampleServiceNov2018\\src\\ExampleServiceNov2018.Application\\ExampleServiceNov2018.Application.csproj": {
+              "projectPath": "C:\\code\\ExampleServiceNov2018\\src\\ExampleServiceNov2018.Application\\ExampleServiceNov2018.Application.csproj"
+            },
             "C:\\code\\ExampleServiceNov2018\\src\\ExampleServiceNov2018.Domain\\ExampleServiceNov2018.Domain.csproj": {
               "projectPath": "C:\\code\\ExampleServiceNov2018\\src\\ExampleServiceNov2018.Domain\\ExampleServiceNov2018.Domain.csproj"
             }

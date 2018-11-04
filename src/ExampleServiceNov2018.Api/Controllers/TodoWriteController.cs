@@ -7,15 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 namespace ExampleServiceNov2018.Api.Controllers
 {
     [Route("todo/write")]
-    public class TodoController : Controller
+    public class TodoWriteController : Controller
     {
         private readonly IMediator _mediator;
 
-        public TodoController(IMediator mediator)
+        public TodoWriteController(IMediator mediator)
         {
             _mediator = mediator;
         }
-
+        
         [HttpPost("NameTodoList")]
         public async Task<CommandResult> NameTodoItem([FromBody]Cmd<NameTodoList> cmd) => await _mediator.Send(cmd);
         

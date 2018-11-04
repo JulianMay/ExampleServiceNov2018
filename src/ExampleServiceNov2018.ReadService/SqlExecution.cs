@@ -9,16 +9,16 @@ namespace ExampleServiceNov2018.ReadService
             var cmd = new SqlCommand(script, connection);
             cmd.ExecuteNonQuery();
         }
-        
-        
+
+
         /// <summary>
-        /// Remember to call this in a 'using' decleration
+        ///     Remember to call this in a 'using' decleration
         /// </summary>
         /// <param name="connectionString"></param>
         /// <returns></returns>
         public static SqlConnection OpenWriteConnection(string connectionString)
         {
-            var conn =new SqlConnection(connectionString);
+            var conn = new SqlConnection(connectionString);
             conn.Open();
             return conn;
         }

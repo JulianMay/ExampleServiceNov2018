@@ -1,19 +1,19 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 using ExampleServiceNov2018.Domain.Commands;
+using MediatR;
 using static ExampleServiceNov2018.Domain.TodoList.TodoList;
 
 namespace ExampleServiceNov2018.Application
 {
     /// <summary>
-    /// Unwraps routing-commandse
+    ///     Unwraps routing-commandse
     /// </summary>
-    public class TodoCommandHandler : 
-        IRequestHandler<Cmd<NameTodoList>,CommandResult>,
-        IRequestHandler<Cmd<AddTodoItem>,CommandResult>,
-        IRequestHandler<Cmd<CheckTodoItem>,CommandResult>,
-        IRequestHandler<Cmd<UncheckTodoItem>,CommandResult>
+    public class TodoCommandHandler :
+        IRequestHandler<Cmd<NameTodoList>, CommandResult>,
+        IRequestHandler<Cmd<AddTodoItem>, CommandResult>,
+        IRequestHandler<Cmd<CheckTodoItem>, CommandResult>,
+        IRequestHandler<Cmd<UncheckTodoItem>, CommandResult>
     {
         private readonly ITodoListRepository _lists;
 
@@ -22,17 +22,25 @@ namespace ExampleServiceNov2018.Application
             _lists = lists;
         }
 
-        public Task<CommandResult> Handle(Cmd<NameTodoList> request, CancellationToken cancellationToken)
-            => Execute(request.Command);
-
         public Task<CommandResult> Handle(Cmd<AddTodoItem> request, CancellationToken cancellationToken)
-            => Execute(request.Command);
+        {
+            return Execute(request.Command);
+        }
 
         public Task<CommandResult> Handle(Cmd<CheckTodoItem> request, CancellationToken cancellationToken)
-            => Execute(request.Command);
+        {
+            return Execute(request.Command);
+        }
+
+        public Task<CommandResult> Handle(Cmd<NameTodoList> request, CancellationToken cancellationToken)
+        {
+            return Execute(request.Command);
+        }
 
         public Task<CommandResult> Handle(Cmd<UncheckTodoItem> request, CancellationToken cancellationToken)
-            => Execute(request.Command);
+        {
+            return Execute(request.Command);
+        }
 
 
         private async Task<CommandResult> Execute(Command cmd)
@@ -46,6 +54,5 @@ namespace ExampleServiceNov2018.Application
                 Revision = newRevision
             };
         }
-        
     }
 }

@@ -14,12 +14,17 @@ namespace ExampleServiceNov2018.Api.Controllers
         {
             _mediator = mediator;
         }
-        
+
         [HttpGet("All")]
-        public async Task<TodoListCollectionDTO> GetAll() => await _mediator.Send(new ListAllItems());
-        
+        public async Task<TodoListCollectionDTO> GetAll()
+        {
+            return await _mediator.Send(new ListAllItems());
+        }
+
         [HttpGet("ById/{aggregateId}")]
-        public async Task<TodoListDTO> GetByIId([FromRoute]string aggregateId) 
-            => await _mediator.Send(new GetTodoListById{AggregateId = aggregateId});
+        public async Task<TodoListDTO> GetByIId([FromRoute] string aggregateId)
+        {
+            return await _mediator.Send(new GetTodoListById {AggregateId = aggregateId});
+        }
     }
 }

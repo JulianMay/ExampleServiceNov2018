@@ -4,14 +4,14 @@
     {
         public string AggregateId { get; set; }
     }
-    
+
     public class NameTodoList : Command
     {
         public string Name { get; set; }
     }
-    
+
     public class AddTodoItem : Command
-    {     
+    {
         public int ItemNumber { get; set; }
         public string ItemText { get; set; }
     }
@@ -20,7 +20,7 @@
     {
         public int ItemNumber { get; set; }
     }
-    
+
     public class UncheckTodoItem : Command
     {
         public int ItemNumber { get; set; }

@@ -7,7 +7,7 @@ using SqlStreamStore;
 namespace ExampleServiceNov2018.ReadService
 {
     /// <summary>
-    /// Runs the background listening of async sql-projectionss
+    ///     Runs the background listening of async sql-projectionss
     /// </summary>
     public class TodoReadServiceHost : IHostedService
     {

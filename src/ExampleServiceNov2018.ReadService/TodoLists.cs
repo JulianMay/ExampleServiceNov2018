@@ -6,25 +6,26 @@ namespace ExampleServiceNov2018.ReadService
     internal class TodoLists : ISqlProjection
     {
         //See TotoReadSchema.sql
-        
+
         public string Apply(object @event)
         {
             switch (@event)
             {
-                case TodoListNamed tln: //Using a SP in schema to do 'Upsert' (don't want too much duplication in payload to sql)
-                    return $"EXEC R_ChangeTodolistName @aggregateId = '{tln.AggregateId}', @name = '{tln.Name}';";                
-                
+                case TodoListNamed tln
+                    : //Using a SP in schema to do 'Upsert' (don't want too much duplication in payload to sql)
+                    return $"EXEC R_ChangeTodolistName @aggregateId = '{tln.AggregateId}', @name = '{tln.Name}';";
+
                 //Invariant guaranteed by write: "Only new (numbered) items can be added" &
                 //"Only existing(named) todolist can have numbers added" 
                 case TodoItemAdded tia:
                     return $@"INSERT INTO R_TodoItem (AggregateId, Number, Text, Checked)
-                                    VALUES ('{tia.AggregateId}', {tia.Number},'{tia.Text}', 0);";                
-                
+                                    VALUES ('{tia.AggregateId}', {tia.Number},'{tia.Text}', 0);";
+
                 //Invariant guaranteed by write: "Only added items can be checked"
                 case TodoItemChecked chkd:
                     return
                         $"UPDATE R_TodoItem SET Checked = 1 WHERE AggregateId = '{chkd.AggregateId}' AND Number = '{chkd.Number}';";
-                
+
                 //Invariant guaranteed by write: "Only added items can be checked"
                 case TodoItemUnchecked unckd:
                     return

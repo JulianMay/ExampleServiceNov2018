@@ -15,9 +15,6 @@
     "frameworks": {
       "netstandard2.0": {
         "projectReferences": {
-          "C:\\code\\ExampleServiceNov2018\\src\\ExampleServiceNov2018.Application\\ExampleServiceNov2018.Application.csproj": {
-            "projectPath": "C:\\code\\ExampleServiceNov2018\\src\\ExampleServiceNov2018.Application\\ExampleServiceNov2018.Application.csproj"
-          },
           "C:\\code\\ExampleServiceNov2018\\src\\ExampleServiceNov2018.Domain\\ExampleServiceNov2018.Domain.csproj": {
             "projectPath": "C:\\code\\ExampleServiceNov2018\\src\\ExampleServiceNov2018.Domain\\ExampleServiceNov2018.Domain.csproj"
           }
@@ -36,6 +33,10 @@
         "Dapper": {
           "target": "Package",
           "version": "[1.50.5, )"
+        },
+        "MediatR": {
+          "target": "Package",
+          "version": "[5.1.0, )"
         },
         "NETStandard.Library": {
           "suppressParent": "All",

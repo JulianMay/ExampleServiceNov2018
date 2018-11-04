@@ -5,6 +5,7 @@ namespace ExampleServiceNov2018.Domain.TodoList
 {
     public class TodoListState : AggregateState
     {
+        private readonly Dictionary<int, TodoItem> _items;
 //        //A full constructor could load from snapshot
 //        public TodoListState(int loadedRevision, string name, Dictionary<int, TodoItem> items) : base(loadedRevision)
 //        {
@@ -17,22 +18,27 @@ namespace ExampleServiceNov2018.Domain.TodoList
             Name = string.Empty;
             _items = new Dictionary<int, TodoItem>();
         }
-        
-        
+
 
         public string Name { get; private set; }
-
-        private Dictionary<int, TodoItem> _items;
         public IReadOnlyDictionary<int, TodoItem> Items => _items;
 
         public override void Apply(object @event)
         {
             switch (@event)
             {
-                case TodoListNamed listNamed: Name = listNamed.Name; break;
-                case TodoItemAdded itemAdded: UpdateItem(itemAdded.Number,itemAdded); break;
-                case TodoItemChecked chkd: UpdateItem(chkd.Number,chkd); break;
-                case TodoItemUnchecked unchkd: UpdateItem(unchkd.Number,unchkd); break;
+                case TodoListNamed listNamed:
+                    Name = listNamed.Name;
+                    break;
+                case TodoItemAdded itemAdded:
+                    UpdateItem(itemAdded.Number, itemAdded);
+                    break;
+                case TodoItemChecked chkd:
+                    UpdateItem(chkd.Number, chkd);
+                    break;
+                case TodoItemUnchecked unchkd:
+                    UpdateItem(unchkd.Number, unchkd);
+                    break;
             }
         }
 
@@ -41,10 +47,8 @@ namespace ExampleServiceNov2018.Domain.TodoList
             var item = Items.TryGetValue(number, out var existing)
                 ? existing.Apply(@event)
                 : TodoItem.New.Apply(@event);
-                    
+
             _items[number] = item;
         }
-
-        
     }
 }

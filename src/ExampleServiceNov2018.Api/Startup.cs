@@ -13,12 +13,12 @@ namespace ExampleServiceNov2018.Api
 {
     public class Startup
     {
-        private const string _connectionString = 
+        private const string _connectionString =
             "Server=.\\sqlexpress; Database=ExampleServiceNov2018; Trusted_Connection=True;";
-        
-        private static MsSqlStreamStoreSettings _msSqlStreamStoreSettings 
+
+        private static readonly MsSqlStreamStoreSettings _msSqlStreamStoreSettings
             = new MsSqlStreamStoreSettings(_connectionString);
-        
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -26,13 +26,15 @@ namespace ExampleServiceNov2018.Api
             services.AddMvc();
             //Register infrastructure
             SetupStreamStore(services);
-            services.AddScoped<ITodoListRepository, TodoListRepositoryRepository>();;
+            services.AddScoped<ITodoListRepository, TodoListRepositoryRepository>();
+            ;
             services.AddScoped<TodoCommandHandler>();
-            
+
             //Register projections and readservices
-            services.AddSingleton(new ReadConnection(_connectionString)); //using the same sql db as write side (for now)            
-            services.AddSingleton<IHostedService, TodoReadServiceHost>();            
-            
+            services.AddSingleton(
+                new ReadConnection(_connectionString)); //using the same sql db as write side (for now)            
+            services.AddSingleton<IHostedService, TodoReadServiceHost>();
+
             //Register mediator
             services.AddMediatR();
             services.AddMediatR(typeof(ApplicationLayer).Assembly);
@@ -42,10 +44,7 @@ namespace ExampleServiceNov2018.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             app.UseMvc();
         }
@@ -53,11 +52,10 @@ namespace ExampleServiceNov2018.Api
         private void SetupStreamStore(IServiceCollection services)
         {
             var streamStore = new MsSqlStreamStore(_msSqlStreamStoreSettings);
-            services.AddSingleton<IStreamStore>((x)=>streamStore);
+            services.AddSingleton<IStreamStore>(x => streamStore);
             var schema = streamStore.CheckSchema().GetAwaiter().GetResult();
             if (!schema.IsMatch())
                 streamStore.CreateSchema();
-
         }
     }
 }

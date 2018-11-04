@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using ExampleServiceNov2018.Domain;
 using ExampleServiceNov2018.Domain.TodoList;
 
 namespace ExampleServiceNov2018.Application

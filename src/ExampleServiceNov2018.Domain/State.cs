@@ -3,14 +3,13 @@
 namespace ExampleServiceNov2018.Domain
 {
     /// <summary>
-    /// Consider making an immutable version?
+    ///     Consider making an immutable version?
     /// </summary>
     public abstract class AggregateState
     {
+        private readonly List<object> _uncomittedEvents = new List<object>();
         public readonly string Id;
         public readonly int LoadedRevision;
-        private readonly List<object> _uncomittedEvents = new List<object>();
-        public IReadOnlyCollection<object> UncommittedEvents => _uncomittedEvents; 
 
 
         protected AggregateState(string id, int loadedRevision)
@@ -19,12 +18,14 @@ namespace ExampleServiceNov2018.Domain
             LoadedRevision = loadedRevision;
         }
 
+        public IReadOnlyCollection<object> UncommittedEvents => _uncomittedEvents;
+
         public void Emit(object @event)
         {
             Apply(@event);
             _uncomittedEvents.Add(@event);
         }
-        
+
         public abstract void Apply(object @event);
     }
 

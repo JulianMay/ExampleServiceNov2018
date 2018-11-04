@@ -3,12 +3,12 @@
     public abstract class CommandResult
     {
         public string AggregateId;
-        
+
         public class Handled : CommandResult
         {
-            public int Revision;            
+            public int Revision;
         }
-        
+
         //Rejected, //Failed
     }
 }

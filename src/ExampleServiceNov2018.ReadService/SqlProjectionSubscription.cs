@@ -21,11 +21,11 @@ namespace ExampleServiceNov2018.ReadService
         private readonly IStreamStore _store;
         private StringBuilder _dmlCollector = new StringBuilder();
 
-        private long _readPosition;
+        private long? _readPosition;
         private bool _runningLive;
         private IAllStreamSubscription _subscription;
 
-        public SqlProjectionSubscription(IStreamStore store, ISqlProjection projection, long initialReadPosition,
+        public SqlProjectionSubscription(IStreamStore store, ISqlProjection projection, long? initialReadPosition,
             string sqlConnString)
         {
             _store = store;
@@ -75,6 +75,9 @@ namespace ExampleServiceNov2018.ReadService
 
         private async Task CommitState()
         {
+            if (_readPosition == null)
+                return;
+            
             using (var readDb = SqlExecution.OpenWriteConnection(_sqlConnString))
             {
                 //Consider a write-lock around _dmlCollector, is it necessary?

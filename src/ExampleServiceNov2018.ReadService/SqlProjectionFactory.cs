@@ -33,7 +33,7 @@ namespace ExampleServiceNov2018.ReadService
                     .Select(x => new
                     {
                         SchemaIdentifier = (string) x.SchemaIdentifier,
-                        ReadPosition = (long) x.ReadPosition
+                        ReadPosition = (long?) x.ReadPosition
                     }).ToDictionary(x => x.SchemaIdentifier);
                 
 
@@ -45,18 +45,15 @@ namespace ExampleServiceNov2018.ReadService
                             AlreadyExists = true,
                             ReadPosition = state.ReadPosition
                         }, connection);
-                    
-                    //it not already existing, register it
-                    yield return WakeReadProjection(projection, new SubscriptionState
-                    {
-                        AlreadyExists = false,
-                        ReadPosition = Position.Start
-                    }, connection);
-                }
-                
-            }
-            
-            
+                    else
+                        //if not already existing, register it
+                        yield return WakeReadProjection(projection, new SubscriptionState
+                        {
+                            AlreadyExists = false,
+                            ReadPosition = Position.Start
+                        }, connection);
+                }                
+            }                        
         }
 
 
@@ -65,7 +62,7 @@ namespace ExampleServiceNov2018.ReadService
             SubscriptionState subscriptionState, SqlConnection connection)
         {
             if(subscriptionState.AlreadyExists == false)
-                RegisterSubscriber(projection.SchemaIdentifier, connection);
+                RegisterSubscriber(projection, connection);
             
             var subscriber = new SqlProjectionSubscription(_sqlStreamStore, projection, subscriptionState.ReadPosition, _connectionString);
             subscriber.Subscribe();
@@ -76,7 +73,7 @@ namespace ExampleServiceNov2018.ReadService
         private class SubscriptionState
         {
             public bool AlreadyExists;
-            public long ReadPosition;
+            public long? ReadPosition;
         }
         
         public static SqlProjectionFactory Prepare(string sqlConnectionString, IStreamStore sqlStreamStore)
@@ -91,10 +88,16 @@ namespace ExampleServiceNov2018.ReadService
                 SqlExecution.Run(_subscriberSchemaSetup, connection);
         }
 
-        private void RegisterSubscriber(string schemaIdentifier, SqlConnection conn)
+        private void RegisterSubscriber(ISqlProjection projection, SqlConnection conn)
         {
-            conn.Execute("INSERT INTO Inf_ReadSubscriptions (SchemaIdentifier, ReadPosition) VALUES (@sch, @rdp)",
-                new {sch = schemaIdentifier, rdp = Position.Start});
+            conn.Execute(projection.SchemaTeardown);
+            foreach (var setupStep in projection.SchemaSetup)
+            {
+                conn.Execute(setupStep);
+            }
+            
+            conn.Execute("INSERT INTO Inf_ReadSubscriptions (SchemaIdentifier, ReadPosition) VALUES (@sch, null)",
+                new {sch = projection.SchemaIdentifier});
         }
         
         /// <summary>
@@ -105,7 +108,7 @@ namespace ExampleServiceNov2018.ReadService
                 BEGIN
                     CREATE TABLE dbo.Inf_ReadSubscriptions(
                         SchemaIdentifier  NVARCHAR(250)     NOT NULL,
-                        ReadPosition      BIGINT            NOT NULL
+                        ReadPosition      BIGINT            NULL
                         PRIMARY KEY (SchemaIdentifier)
                     )
                 END

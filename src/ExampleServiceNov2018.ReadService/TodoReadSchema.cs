@@ -17,7 +17,7 @@ END
 
 IF EXISTS (SELECT * FROM sysobjects WHERE name = 'R_TodoList')
 BEGIN
-	DROP TABLE R_TodoLists
+	DROP TABLE R_TodoList
 END
 
 ";

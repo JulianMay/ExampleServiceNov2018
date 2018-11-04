@@ -24,7 +24,7 @@ namespace ExampleServiceNov2018.ReadService
         public Task StartAsync(CancellationToken cancellationToken)
         {
             var factory = SqlProjectionFactory.Prepare(_sqlConnectionString, _streamStore);
-            var todoListProjection = new TodoLists();
+            var todoListProjection = new TodoListsProjection();
             ISqlProjection[] projections = {todoListProjection};
             _subscriptions = factory.WakeReadProjections(projections).ToArray();
             return Task.CompletedTask;

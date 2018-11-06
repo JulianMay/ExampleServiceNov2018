@@ -20,8 +20,10 @@ namespace ExampleServiceNov2018.ReadService
         private readonly SqlSubscriptionPersistence _persistence;
         private readonly IStreamStore _store;
         private StringBuilder _dmlCollector = new StringBuilder();
-
-        private long? _readPosition;
+        private volatile static object commitLock = new object();
+        
+        private long? _lastReadPosition;
+        private long? _uncomittedReadCount;
         private bool _runningLive;
         private IAllStreamSubscription _subscription;
         
@@ -33,13 +35,14 @@ namespace ExampleServiceNov2018.ReadService
             _store = store;
             _projection = projection;
             _persistence = persistence;
-            _readPosition = persistence.InitialReadPosition;
+            _lastReadPosition = persistence.InitialReadPosition;
+            _uncomittedReadCount = 0;
             _runningLive = false;
         }
 
         public void Subscribe()
         {
-            _subscription = _store.SubscribeToAll(_readPosition, OnEvent, OnSubscriptionDropped, OnCatchUpStatus, true,
+            _subscription = _store.SubscribeToAll(_lastReadPosition, OnEvent, OnSubscriptionDropped, OnCatchUpStatus, true,
                 _projection.SchemaIdentifier.Name);
             _subscribedAt = DateTimeOffset.Now;
         }
@@ -58,7 +61,7 @@ namespace ExampleServiceNov2018.ReadService
         private async Task OnEvent(IAllStreamSubscription subscription, StreamMessage msg,
             CancellationToken cancelToken)
         {
-            _readPosition = msg.Position;
+            _lastReadPosition = msg.Position;
 
             var @event = await Deserialization.Deserialize(msg);
 
@@ -71,17 +74,23 @@ namespace ExampleServiceNov2018.ReadService
 
         private Task CommitIfRelevant()
         {
-            if (_runningLive || _readPosition % 1000 == 0)
+            if (_runningLive || _uncomittedReadCount > 1000)
                 return CommitState();
+
+            ++_uncomittedReadCount;
             return Task.CompletedTask;
         }
-
+                //RACE CONDITION ... :/ Need a state-machine for commits i think...
         private async Task CommitState()
         {
-            if (_readPosition == null)
-                return;
-            
-            await _persistence.CommitToPersistence(_dmlCollector, _readPosition);
+//            lock (commitLock)
+//            {
+                if (_lastReadPosition == null)
+                    return;
+
+                await _persistence.CommitToPersistence(_dmlCollector, _lastReadPosition);
+                _uncomittedReadCount = 0;
+            //}
         }
 
         private void OnSubscriptionDropped(IAllStreamSubscription subscription, SubscriptionDroppedReason reason,

@@ -5,8 +5,6 @@ namespace ExampleServiceNov2018.ReadService
 {
     internal class TodoListsProjection : ISqlProjection
     {
-        //See TotoReadSchema.sql
-
         public string Apply(object @event)
         {
             switch (@event)

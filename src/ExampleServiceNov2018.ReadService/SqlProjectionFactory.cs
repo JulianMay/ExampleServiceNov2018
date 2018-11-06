@@ -25,28 +25,30 @@ namespace ExampleServiceNov2018.ReadService
 
         internal IEnumerable<SqlProjectionSubscription> WakeReadProjections(ISqlProjection[] projections)
         {
-            // Subscriptions are scoped as: 1 instance per scema per database (connectionstring becomes the partition-key)
+            // Subscriptions are scoped as: 1 instance per 'SchemaName' per database (connectionstring becomes the partition-key)
             using (var connection = SqlExecution.OpenWriteConnection(_connectionString))
             {
                 var existingSubscriptions = connection.Query(
-                        "SELECT SchemaIdentifier, ReadPosition FROM Inf_ReadSubscriptions")
+                        "SELECT SchemaName, SchemaRevision, ReadPosition FROM Inf_ReadSubscriptions")
                     .Select(x => new
                     {
-                        SchemaIdentifier = (string) x.SchemaIdentifier,
+                        SchemaName = (string) x.SchemaName,
+                        SchemaRevision = (string) x.SchemaRevision,
                         ReadPosition = (long?) x.ReadPosition
-                    }).ToDictionary(x => x.SchemaIdentifier);
+                    }).ToDictionary(x => x.SchemaName);
                 
 
                 foreach (var projection in projections)
                 {
-                    if (existingSubscriptions.TryGetValue(projection.SchemaIdentifier, out var state))
+                    if (existingSubscriptions.TryGetValue(projection.SchemaIdentifier.Name, out var state)
+                            && projection.SchemaIdentifier.Revision.Equals(state.SchemaRevision))
                         yield return WakeReadProjection(projection, new SubscriptionState
                         {
                             AlreadyExists = true,
                             ReadPosition = state.ReadPosition
                         }, connection);
                     else
-                        //if not already existing, register it
+                        //if not already existing (or existing in another revision), (re)register it
                         yield return WakeReadProjection(projection, new SubscriptionState
                         {
                             AlreadyExists = false,
@@ -64,7 +66,9 @@ namespace ExampleServiceNov2018.ReadService
             if(subscriptionState.AlreadyExists == false)
                 RegisterSubscriber(projection, connection);
             
-            var subscriber = new SqlProjectionSubscription(_sqlStreamStore, projection, subscriptionState.ReadPosition, _connectionString);
+            var persistence = new SqlSubscriptionPersistence(_connectionString, subscriptionState.ReadPosition, projection);            
+            var subscriber = new SqlProjectionSubscription(_sqlStreamStore, projection, persistence);
+            
             subscriber.Subscribe();
             return subscriber;
         }
@@ -96,8 +100,8 @@ namespace ExampleServiceNov2018.ReadService
                 conn.Execute(setupStep);
             }
             
-            conn.Execute("INSERT INTO Inf_ReadSubscriptions (SchemaIdentifier, ReadPosition) VALUES (@sch, null)",
-                new {sch = projection.SchemaIdentifier});
+            conn.Execute("INSERT INTO Inf_ReadSubscriptions (SchemaName, SchemaRevision, ReadPosition) VALUES (@name, @rev, null)",
+                new {name = projection.SchemaIdentifier.Name, rev = projection.SchemaIdentifier.Revision});
         }
         
         /// <summary>
@@ -107,9 +111,10 @@ namespace ExampleServiceNov2018.ReadService
             IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'Inf_ReadSubscriptions')
                 BEGIN
                     CREATE TABLE dbo.Inf_ReadSubscriptions(
-                        SchemaIdentifier  NVARCHAR(250)     NOT NULL,
+                        SchemaName  NVARCHAR(250)     NOT NULL,
+                        SchemaRevision  NVARCHAR(250)     NOT NULL,
                         ReadPosition      BIGINT            NULL
-                        PRIMARY KEY (SchemaIdentifier)
+                        PRIMARY KEY (SchemaName)
                     )
                 END
         ";

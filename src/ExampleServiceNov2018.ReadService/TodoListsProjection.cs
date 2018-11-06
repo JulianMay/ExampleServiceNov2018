@@ -35,7 +35,13 @@ namespace ExampleServiceNov2018.ReadService
             return string.Empty;
         }
 
-        public string SchemaIdentifier => "Initial readmodel, nov. 3rd 2018";
+        public SchemaIdentifier SchemaIdentifier => _schema;
+        private static SchemaIdentifier _schema = new SchemaIdentifier
+        {
+            Name = "TodoListReadModel",
+            Revision="nov. 6th 2018"
+        };
+        
         public string SchemaTeardown => TodoReadSchema.TearDownSchema;
         public IEnumerable<string> SchemaSetup => TodoReadSchema.SetupSchema;
     }

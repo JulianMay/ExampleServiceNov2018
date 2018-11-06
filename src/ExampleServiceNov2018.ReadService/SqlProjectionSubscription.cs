@@ -17,28 +17,31 @@ namespace ExampleServiceNov2018.ReadService
     internal class SqlProjectionSubscription
     {
         private readonly ISqlProjection _projection;
-        private readonly string _sqlConnString;
+        private readonly SqlSubscriptionPersistence _persistence;
         private readonly IStreamStore _store;
         private StringBuilder _dmlCollector = new StringBuilder();
 
         private long? _readPosition;
         private bool _runningLive;
         private IAllStreamSubscription _subscription;
+        
+        //Performance-testing
+        private DateTimeOffset _subscribedAt;
 
-        public SqlProjectionSubscription(IStreamStore store, ISqlProjection projection, long? initialReadPosition,
-            string sqlConnString)
+        public SqlProjectionSubscription(IStreamStore store, ISqlProjection projection, SqlSubscriptionPersistence persistence)
         {
             _store = store;
             _projection = projection;
-            _readPosition = initialReadPosition;
-            _sqlConnString = sqlConnString;
+            _persistence = persistence;
+            _readPosition = persistence.InitialReadPosition;
             _runningLive = false;
         }
 
         public void Subscribe()
         {
             _subscription = _store.SubscribeToAll(_readPosition, OnEvent, OnSubscriptionDropped, OnCatchUpStatus, true,
-                _projection.SchemaIdentifier);
+                _projection.SchemaIdentifier.Name);
+            _subscribedAt = DateTimeOffset.Now;
         }
 
         public Task UnSubscribe()
@@ -78,22 +81,7 @@ namespace ExampleServiceNov2018.ReadService
             if (_readPosition == null)
                 return;
             
-            using (var readDb = SqlExecution.OpenWriteConnection(_sqlConnString))
-            {
-                //Consider a write-lock around _dmlCollector, is it necessary?
-                //Consider pre-pending a "BEGIN TRANSACTION" and have a all-or-nothing write
-                _dmlCollector.AppendLine(
-                    $"UPDATE Inf_ReadSubscriptions SET ReadPosition = {_readPosition} WHERE SchemaIdentifier = '{_projection.SchemaIdentifier}';");
-                var dml = new SqlCommand(_dmlCollector.ToString(), readDb);
-                var effect = await dml.ExecuteNonQueryAsync();
-                if (effect == 0)
-                    throw new InvalidOperationException(
-                        "Something went wrong while updating the state of a readservice. SQL:\r\n" + _dmlCollector);
-
-                //todo: Error handling?
-
-                _dmlCollector = new StringBuilder();
-            }
+            await _persistence.CommitToPersistence(_dmlCollector, _readPosition);
         }
 
         private void OnSubscriptionDropped(IAllStreamSubscription subscription, SubscriptionDroppedReason reason,
@@ -102,7 +90,7 @@ namespace ExampleServiceNov2018.ReadService
             throw new NotImplementedException("No error-handling in this POC");
         }
 
-
+        
         private void OnCatchUpStatus(bool isCatchedUp)
         {
             if (_runningLive == isCatchedUp)
@@ -111,7 +99,13 @@ namespace ExampleServiceNov2018.ReadService
             _runningLive = isCatchedUp;
 
             if (isCatchedUp)
+            {
                 CommitState().GetAwaiter().GetResult();
+                
+                //performance testing:
+                var timeSpentCatchingUp = DateTimeOffset.Now - _subscribedAt;
+                Console.WriteLine($"Time taken to restore state of projection: {timeSpentCatchingUp.TotalSeconds} seconds");
+            }
         }
     }
 }

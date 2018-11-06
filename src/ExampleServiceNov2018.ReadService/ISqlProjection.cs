@@ -12,7 +12,7 @@ namespace ExampleServiceNov2018.ReadService
         /// <summary>
         ///     Running numbers collide, let's just name the schema 'something'
         /// </summary>
-        string SchemaIdentifier { get; }
+        SchemaIdentifier SchemaIdentifier { get; }
 
         /// <summary>
         ///     Teardown script to truncate & drop previous (and older) tables

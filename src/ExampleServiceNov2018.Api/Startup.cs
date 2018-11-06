@@ -14,7 +14,7 @@ namespace ExampleServiceNov2018.Api
     public class Startup
     {
         private const string _connectionString =
-            "Server=.\\sqlexpress; Database=Todo5; Trusted_Connection=True;";
+            "Server=.\\sqlexpress; Database=Todolist; Trusted_Connection=True;";
 
         private static readonly MsSqlStreamStoreSettings _msSqlStreamStoreSettings
             = new MsSqlStreamStoreSettings(_connectionString);

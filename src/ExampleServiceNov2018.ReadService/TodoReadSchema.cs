@@ -27,13 +27,13 @@ END
             //Todo: use different schema than 'dbo', rather than prepending 'R_' to tablenames...
             @"
 CREATE TABLE dbo.R_TodoList(
-        AggregateId         CHAR(42)            NOT NULL,
+        AggregateId         CHAR(100)            NOT NULL,
         Name          NVARCHAR(1000)            NOT NULL,        
         PRIMARY KEY (AggregateId)
     );",
             @"
 CREATE TABLE dbo.R_TodoItem(
-		AggregateId         CHAR(42)            NOT NULL,
+		AggregateId         CHAR(100)            NOT NULL,
 		Number				INT					NOT NULL,
 		[Text]		  NVARCHAR(1000)			NOT NULL,
 		Checked				BIT					NOT NULL,

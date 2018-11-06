@@ -4,7 +4,7 @@
     {
         public readonly string AggregateId;
 
-        protected Event(string aggregateId)
+        protected Event(AggragateId aggregateId)
         {
             AggregateId = aggregateId;
         }

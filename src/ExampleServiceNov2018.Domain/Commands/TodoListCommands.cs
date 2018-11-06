@@ -2,7 +2,7 @@
 {
     public abstract class Command
     {
-        public string AggregateId { get; set; }
+        public AggragateId AggregateId { get; set; }
     }
 
     public class NameTodoList : Command

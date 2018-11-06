@@ -50,7 +50,7 @@ namespace ExampleServiceNov2018.ReadService
                         yield return WakeReadProjection(projection, new SubscriptionState
                         {
                             AlreadyExists = false,
-                            ReadPosition = Position.Start
+                            ReadPosition = null
                         }, connection);
                 }                
             }                        

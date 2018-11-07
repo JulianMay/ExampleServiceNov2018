@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0C567E92-2179-44FB-ABAB-C5423E65E561}"
+ProjectSection(SolutionItems) = preProject
+	src\PerformanceTest.txt = src\PerformanceTest.txt
+EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleServiceNov2018.Api", "src\ExampleServiceNov2018.Api\ExampleServiceNov2018.Api.csproj", "{CCBD55E5-F20C-46B3-933E-F4B6F65DAB27}"
 EndProject

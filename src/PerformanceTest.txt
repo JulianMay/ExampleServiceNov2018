@@ -1,0 +1,14 @@
+Used /Test/Seed to generate 42335 events across 4234 streams
+
+only time have been measured - memory-footprint rises with batchsize
+
+Time to rebuild full readmodel state:
+
+   Batchsize 1000: 14.8 seconds
+   Batchsize 10000: 16.2 seconds
+   Batchsize 200: 14.2 seconds
+   Batchsize 50: 14.9 seconds
+   Batchsize 500: 13.3 seconds
+   
+   42335 events at 13.3 seconds is a bit over 3183 events/sec
+   That's 5.2 minutes for handling 1 million events

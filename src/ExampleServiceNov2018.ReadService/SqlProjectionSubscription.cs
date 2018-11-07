@@ -80,7 +80,7 @@ namespace ExampleServiceNov2018.ReadService
             }
         }
 
-        private static CommitBatchPolicy BatchingPolicy = new CommitBatchPolicy(1000);
+        private static CommitBatchPolicy BatchingPolicy = new CommitBatchPolicy(500);
 
         private async Task CommitIfRelevant(ProjectionPosition p)
         {

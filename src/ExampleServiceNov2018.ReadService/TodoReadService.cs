@@ -38,7 +38,7 @@ namespace ExampleServiceNov2018.ReadService
                 var qry = db.QueryMultiple(
                     @"select AggregateId, Name from R_TodoList order by AggregateId
                       select AggregateId, Number, Text, Checked from R_TodoItem order by AggregateId, Number");
-                var listInfo = qry.Read().Select(x => new ListData(x.AggregateId.Trim(), x.Name));
+                var listInfo = qry.Read().Select(x => new ListData(((string)x.AggregateId).Trim(), x.Name));
                 var itemInfo = qry.Read();
 
                 return MapAllLists(listInfo, itemInfo);

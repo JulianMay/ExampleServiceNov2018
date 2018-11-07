@@ -15,4 +15,12 @@
     <ProjectReference Include="..\ExampleServiceNov2018.Infrastructure\ExampleServiceNov2018.Infrastructure.csproj" />
     <ProjectReference Include="..\ExampleServiceNov2018.ReadService\ExampleServiceNov2018.ReadService.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="SqlStreamStore, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\libs\SqlStreamStore_LatestKnownHead_FeatureBranch\SqlStreamStore.dll</HintPath>
+    </Reference>
+    <Reference Include="SqlStreamStore.MsSql, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\libs\SqlStreamStore_LatestKnownHead_FeatureBranch\SqlStreamStore.MsSql.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

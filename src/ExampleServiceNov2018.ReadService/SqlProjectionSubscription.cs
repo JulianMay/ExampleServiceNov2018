@@ -23,12 +23,13 @@ namespace ExampleServiceNov2018.ReadService
         private volatile static object commitLock = new object();
         
         private long? _lastReadPosition;
-        private long? _uncomittedReadCount;
+        private long? _lastCommitPosition;
         private bool _runningLive;
         private IAllStreamSubscription _subscription;
+        private int commitsInThisLifeCycle = 0;
         
         //Performance-testing
-        private DateTimeOffset _subscribedAt;
+        private DateTimeOffset _startedCatchingUpAt;
 
         public SqlProjectionSubscription(IStreamStore store, ISqlProjection projection, SqlSubscriptionPersistence persistence)
         {
@@ -36,7 +37,6 @@ namespace ExampleServiceNov2018.ReadService
             _projection = projection;
             _persistence = persistence;
             _lastReadPosition = persistence.InitialReadPosition;
-            _uncomittedReadCount = 0;
             _runningLive = false;
         }
 
@@ -44,7 +44,7 @@ namespace ExampleServiceNov2018.ReadService
         {
             _subscription = _store.SubscribeToAll(_lastReadPosition, OnEvent, OnSubscriptionDropped, OnCatchUpStatus, true,
                 _projection.SchemaIdentifier.Name);
-            _subscribedAt = DateTimeOffset.Now;
+            _startedCatchingUpAt = DateTimeOffset.Now;
         }
 
         public Task UnSubscribe()
@@ -63,35 +63,52 @@ namespace ExampleServiceNov2018.ReadService
         {
             _lastReadPosition = msg.Position;
 
-            var @event = await Deserialization.Deserialize(msg);
+            try
+            {
+                var @event = await Deserialization.Deserialize(msg);
 
-            var change = _projection.Apply(@event);
-            if (change != string.Empty)
-                _dmlCollector.AppendLine(change);
-
-            await CommitIfRelevant();
+                var change = _projection.Apply(@event);
+                if (change != string.Empty)
+                    _dmlCollector.AppendLine(change);
+                
+                await CommitIfRelevant(ProjectionPosition.From(subscription, msg, _lastCommitPosition));
+            }
+            catch (Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"WHOOPS: {e}");
+            }
         }
 
-        private Task CommitIfRelevant()
+        private static CommitBatchPolicy BatchingPolicy = new CommitBatchPolicy(1000);
+
+        private async Task CommitIfRelevant(ProjectionPosition p)
         {
-            if (_runningLive || _uncomittedReadCount > 1000)
-                return CommitState();
+            if (!BatchingPolicy.ShouldCommit(p))
+                return;
 
-            ++_uncomittedReadCount;
-            return Task.CompletedTask;
+            await CommitState();
+            if (p.LooksLikeLatestAvailableInput())
+            {
+                //performance testing:
+                var now = DateTimeOffset.UtcNow;
+                var timeSpentCatchingUp = now - _startedCatchingUpAt;                
+                Console.WriteLine($"Time taken to restore state of projection: {timeSpentCatchingUp.TotalSeconds} seconds");                
+            }
+                
         }
-                //RACE CONDITION ... :/ Need a state-machine for commits i think...
+        
         private async Task CommitState()
         {
-//            lock (commitLock)
-//            {
-                if (_lastReadPosition == null)
-                    return;
+            if (_lastReadPosition == null)
+                return;
 
-                await _persistence.CommitToPersistence(_dmlCollector, _lastReadPosition);
-                _uncomittedReadCount = 0;
-            //}
+            _lastCommitPosition = await _persistence.CommitToPersistence(_dmlCollector, _lastReadPosition);  
+            _dmlCollector = new StringBuilder();
+            ++commitsInThisLifeCycle;
         }
+        
+        
 
         private void OnSubscriptionDropped(IAllStreamSubscription subscription, SubscriptionDroppedReason reason,
             Exception exception)
@@ -107,14 +124,16 @@ namespace ExampleServiceNov2018.ReadService
 
             _runningLive = isCatchedUp;
 
-            if (isCatchedUp)
-            {
-                CommitState().GetAwaiter().GetResult();
-                
-                //performance testing:
-                var timeSpentCatchingUp = DateTimeOffset.Now - _subscribedAt;
-                Console.WriteLine($"Time taken to restore state of projection: {timeSpentCatchingUp.TotalSeconds} seconds");
-            }
+//            if (isCatchedUp)
+//            {
+//                //performance testing:
+//                var timeSpentCatchingUp = DateTimeOffset.UtcNow - _startedCatchingUpAt;
+//                Console.WriteLine($"Time taken to restore state of projection: {timeSpentCatchingUp.TotalSeconds} seconds");
+//            }
+//            else
+//            {
+//                _startedCatchingUpAt = DateTimeOffset.UtcNow;
+//            }
         }
     }
 }

@@ -22,15 +22,18 @@ namespace ExampleServiceNov2018.ReadService
         }
 
 
-        internal async Task CommitToPersistence(StringBuilder dmlCollector, long? position)
+        internal async Task<long> CommitToPersistence(StringBuilder dmlCollector, long? position)
         {
+            if(position.HasValue == false)
+                throw new ArgumentException("Commit's must have a position", nameof(position));
+            
             using (var readDb = SqlExecution.OpenWriteConnection(_commitConnectionstring))
             {
                 //Consider a write-lock around _dmlCollector, is it necessary?
                 //Consider pre-pending a "BEGIN TRANSACTION" and have a all-or-nothing write
                 dmlCollector.PrependLine("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED; BEGIN TRANSACTION;");
                 dmlCollector.AppendLine(
-                    $"UPDATE Inf_ReadSubscriptions SET ReadPosition = {position} WHERE SchemaName = '{_projection.SchemaIdentifier.Name}';");
+                    $"UPDATE Inf_ReadSubscriptions SET ReadPosition = {position.Value} WHERE SchemaName = '{_projection.SchemaIdentifier.Name}';");
                 dmlCollector.AppendLine("COMMIT TRANSACTION;");
                 
                 var dml = new SqlCommand(dmlCollector.ToString(), readDb);
@@ -42,6 +45,7 @@ namespace ExampleServiceNov2018.ReadService
 
                 //todo: Error handling?
 
+                return position.Value;
             }
         
         }
